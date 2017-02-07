@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<!-- 给类型起别名,给PersonMapper.xml里面的类型起别名，为了写起来更短一些 -->
+	<typeAliases>
+		<typeAlias type="com.yztc.pojo.Person" alias="Person"/>
+		<typeAlias type="com.yztc.pojo.PersonInfo" alias="PersonInfo"/>
+	</typeAliases>
+
+	<!-- 配置数据源，事务   environment标签可以有多个
+		default="test" 使用的id="test"的环境(测试)
+		default="deploy" 使用的id="deploy"的环境(发布)
+	-->
+	<environments default="test">
+		<environment id="test">
+			<!-- 配置事务管理 
+				type=JDBC(帮我们管理事务)/MANAGED(自己管理事务)
+			-->
+			<transactionManager type="JDBC"></transactionManager>
+		
+			<!-- 数据源: POOLED池/UNPOOLED非池/JNDI
+				JNDI不管数据源是什么，给你一个连接名称，会产生一个JNDI服务器帮你管理连接
+			 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql://localhost:3306/test?charsetEncoding=utf8"/>
+				<property name="username" value="root"/>
+				<property name="password" value="123456"/>
+			</dataSource>
+		</environment>
+		
+		<environment id="deploy">
+			<!-- 配置事务管理 
+				type=JDBC(帮我们管理事务)/MANAGED(自己管理事务)
+			-->
+			<transactionManager type="JDBC"></transactionManager>
+		
+			<!-- 数据源: POOLED池/UNPOOLED非池/JNDI
+				JNDI不管数据源是什么，给你一个连接名称，会产生一个JNDI服务器帮你管理连接
+			 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql://localhost:3306/test?charsetEncoding=utf8"/>
+				<property name="username" value="root"/>
+				<property name="password" value="123456"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	
+	<!-- 配置一下映射文件 -->
+	<mappers>
+		<mapper resource="com/yztc/mapper/PersonMapper.xml"/>
+		<mapper resource="com/yztc/mapper/PersonInfoMapper.xml"/>
+	</mappers>
+	
+</configuration>

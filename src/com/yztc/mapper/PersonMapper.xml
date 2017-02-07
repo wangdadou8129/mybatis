@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 本文件映射的就是原来PersonDaoImpl需要做的事 -->
+<mapper namespace="com.yztc.mapper.PersonMapper">
+	<!-- 定义一个sql片段 ,下面使用include来导入-->
+	<sql id="cols">id,user_name,age,remark</sql>
+
+
+	<!-- 结果集映射 -->
+	<resultMap type="com.yztc.pojo.Person" id="PersonRM">
+		<!-- 设置主键的映射 property是Person的属性，column是表的列-->
+		<id property="id" column="id"/>
+		<!-- 除了主键剩下的用result来映射 -->
+		<result property="name" column="user_name"/>
+		<result property="age" column="age"/>
+		<result property="remark" column="remark"/>
+	</resultMap>
+
+	<!-- 给此条查找起个id
+	<select id="findAll" resultType="Person">
+		select id,user_name as name,age,remark from person
+	</select>
+	-->
+	 
+	<!-- 使用映射的Map来匹配 --> 
+	<select id="findAll" resultMap="PersonRM">
+		select <include refid="cols"/> from person
+	</select>
+
+	<!-- 按条件查询 -->
+	 <select id="findById" resultMap="PersonRM" parameterType="int"> 
+	<!-- <select id="findById" resultType="com.yztc.pojo.Person" parameterType="Map">-->
+		select <include refid="cols"/> from person where id= #{id}
+	</select>
+
+
+	<!-- 插入一条记录 -->
+	<insert id="save" parameterType="map">
+		insert into person values(#{id},#{user_name},#{age},#{remark});
+	</insert>
+	
+	<!-- 更新一条记录 -->
+	<update id="update" parameterType="Person">
+		update person set user_name=#{name},age=#{age},remark=#{remark} where id=#{id};
+	</update>
+	
+	
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="int">
+		delete from person where id=#{id}
+	</delete>
+	
+	
+	<!-- 删除多条记录 -->
+	<delete id="deleteMore" parameterType="map">
+		delete from person where id  between #{startId} and #{endId};
+	</delete>
+	
+	<!-- 获取记录数 -->
+	<select id="count" resultType="int">
+		select count(*) from person
+	</select>
+	
+</mapper>

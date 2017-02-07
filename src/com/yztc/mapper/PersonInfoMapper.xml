@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yztc.mapper.PersonInfoMapper">
+
+	<!-- 设置Person的Mapper -->
+	<resultMap type="com.yztc.pojo.Person" id="PersonRM">
+		<id property="id" column="id"/>
+		<result property="name" column="user_name"/>
+		<result property="age" column="age"/>
+		<result property="remark" column="remark"/>
+	</resultMap>
+
+	<!-- 设置映射的Map -->
+	<resultMap type="com.yztc.pojo.Person" id="PersonRM2" extends="PersonRM">
+		<!-- 包含了另一张表的内容单个对象: association  javaType组合 -->
+		<association property="personInfo" javaType="com.yztc.pojo.PersonInfo">
+			<id property="id" column="pid"/>
+			<result property="station" column="station"/>
+			<result property="joinDate" column="join_date"/>
+		</association>
+	</resultMap>
+	
+	
+	
+	
+	
+	<!-- 只要person和book -->
+	<resultMap type="com.yztc.pojo.Person" id="PersonRM3" extends="PersonRM">
+		<!-- 集合组合使用: collection ofType组合 -->
+		<collection property="books" ofType="com.yztc.pojo.Book">
+			<id property="id" column="book_id"/>
+			<result property="name" column="book_name"/>
+			<result property="money" column="money"/>
+		</collection>
+	</resultMap>
+	
+	
+	<!-- person,person_info,book三表都要的查询 -->
+	<resultMap type="com.yztc.pojo.Person" id="PersonRM4" extends="PersonRM2">
+		<!-- 集合组合使用: collection ofType组合 -->
+		<collection property="books" ofType="com.yztc.pojo.Book">
+			<id property="id" column="book_id"/>
+			<result property="name" column="book_name"/>
+			<result property="money" column="money"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 三张连表查询 -->
+	<select id="findPersonAndPersonInfoAndBook" resultMap="PersonRM4">
+		select 
+			p2.id,p2.user_name,p2.age,p2.remark,
+			p2.pid,p2.station,p2.join_date,
+			b.id as book_id,b.name as book_name,b.money
+		from 
+			(select 
+				p.id,p.user_name,p.age,p.remark,
+				pi.id as pid,pi.station,pi.join_date 
+			from
+ 				person as p 
+ 			left join 
+ 				person_info as pi 
+ 			on p.id=pi.id) p2 
+ 		left 
+ 			join book as b
+ 		on 
+ 			p2.id = b.person_id;
+	</select>
+	
+	
+	<!-- 只查询Person和book -->
+	<select id="findPersonAndBook" resultMap="PersonRM3">
+		select 
+			person.id,person.user_name,person.age,person.remark,
+			book.id as book_id,book.name as book_name,book.money
+		from 
+			person 
+		left join 
+			book 
+		on 
+			person.id=book.person_id;
+	</select>
+	
+	
+	
+	<!-- 根据id -->
+	<select id="findTwoTable" resultMap="PersonRM2">
+		select 
+			person.id,person.user_name,person.age,person.remark,
+			person_info.id as pid,person_info.station,person_info.join_date
+		from 
+			person
+		left join 
+			person_info 
+		on
+			person.id=person_info.id;
+	</select>
+
+</mapper>
